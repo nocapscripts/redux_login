@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+        <script src="script.js" type="text/javascript"></script>
+        <link href="style.css" rel="stylesheet">
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <style>
+        
+    </style>
+    <body>
+        
+        
+        <div id="loading" class="items-center text-center justify-center">
+            
+            <svg aria-hidden="true" class="ml-[49%] animate-spin text-green-500/90 dark:text-green-600/50 w-12 h-12 mr-2" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"/>
+            </svg>
+            <br>
+            <br>
+            <br>
+            <br>
+           
+            <p>Loading...</p>
+        </div>
+        
+        <div id="main">
+            <div class="blackbar top">
+                <div id="disconnect" onclick="disconnect();">Lahku</div>
+            </div>
+            <div id="error">
+                <div class="container">
+                    <div class="title outline">
+                        Viga
+                    </div>
+                    <div class="errmsg">
+                        Tekkis viga!
+                    </div>
+                    <div class="button" onclick="retry();">
+                        Proovi uuesti
+                    </div>
+                    <div style="color: red;" class="button" onclick="disconnect();">
+                        Välju
+                    </div>
+                </div>
+            </div>
+            <div id="deleteCharacter">
+                <div class="container">
+                    <div class="title outline">
+                        KUSTUTAMINE
+                    </div>
+                    <div class="errmsg">
+                        Oled kindel et kustutada just see tegelane?
+                    </div>
+                    <div style="color: red;" class="button" onclick="deleteCharacter();">
+                        KUSTUTA
+                    </div>
+                    <div class="button" onclick="showDeleteCharacter(null, null, true);">
+                        LOOBU
+                    </div>
+                </div>
+            </div>
+            <div id="newCharacter" class="window">
+                <div class="container center">
+                    <div class="title">
+                        <h1 class="outline">Uue tegelase loomine</h1>
+                    </div>
+                    <div class="data scroll">
+                        <form id="characterForm" onsubmit="return false;">
+                            Eesnimi:<br>
+                            <input type="text" id="firstname" name="firstname" value="" maxlength="25" pattern="[üåäöÅÄÖa-zA-Z-]{2,}" required>
+                            <br><br>
+                            Perekonna nimi:<br>
+                            <input type="text" id="lastname" name="lastname" value="" pattern="[üåäöÅÄÖa-zA-Z-]{2,}" maxlength="25" required>
+                            <br><br>
+                            Sünd:<br>
+                            <input type="date" id="dob" name="dob" max="2000-01-01" min="1927-01-01" required>
+                            <br><br>
+                            Sugu:<br>
+                            <select id="gender" name="gender">
+                                <option value="Male">Mees</option>
+                                <option value="Female">Naine</option>
+                            </select>
+                            <br><br>
+                            Kirjeldus<br>
+                            <textarea id="story" placeholder="Siia kirjuta kus linnas oled olnud ning väike kirjeldus endast" onclick="this.select();" name="background" id="background" maxlength="2000" required></textarea>
+                            <br><br>
+                            <input class="button" type="submit" value="Loo tegelane">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="init" class="window outline">
+                <img class="ml-[47%]" src="./logo.png"/>
+                <br>
+                <br>
+                <h1>Teretulemast <span style="color: lightskyblue;">Wild Sons RP serveri</span></h1>
+                <h1>Vajuta <span style="color: lightskyblue;">ENTERit</span> et alustada!</h1>
+            </div>
+            <div id="characters" class="window">
+                <div id="slot1" class="slot">
+                    <div class="title">Debug 1</div>
+                    <div id="cdata" class="scroll"> 
+                        <div class="name"><span class="entry">NIMI:</span> Debug 1</div>
+                        <div class="dob"><span class="entry">DOB:</span> 11/12/1996</div>
+                        <div class="cash"><span class="entry">SULA:</span> $1,542</div>
+                        <div class="bank"><span class="entry">PANK:</span> $15,502</div>
+                        <div class="jailed outline">Vangis</div>
+                        <div class="story"><span class="entry" style="word-wrap: break-word"><br />Story: </span><br />Bruno is a warm-hearted, easy to like, big guy.  Some might call him simple, but he likes to think of himself as genuine and honest.  His size (6'3, 240lbs) has a tendency to intimidate people, so you'll often see Bruno sitting or slouched down to do his best not to make people uncomfortable.</div>
+                    </div>
+                    <div class="buttons">
+                        <div class="button play" onclick="selectCharacter();"><div class="verticalAlign">Vali tegelane</div></div>
+                        <div class="button del" onclick="showDeleteCharacter(1);"><div class="verticalAlign">Kustuta tegelane</div></div>
+                    </div>
+                </div>
+                <div id="slot2" class="slot">
+                    <div class="title">Debug 2</div>
+                    <div id="cdata" class="scroll"> 
+                        <div class="name"><span class="entry">NIMI:</span> Debug 2</div>
+                        <div class="dob"><span class="entry">DOB:</span> 11/12/1996</div>
+                        <div class="cash"><span class="entry">SULA:</span> $1,542</div>
+                        <div class="bank"><span class="entry">PANK:</span> $15,502</div>
+                        <div class="story"><span class="entry" style="word-wrap: break-word"><br />Story: </span><br />Francisco was born in Linz, Austria. Although being born into a poor Family, he had a pretty nice Childhood and uneventful Teenage Years. When he was 17 Years of age he joined the Military. Although going by smooth, in the last 5 Weeks he lost his Best Friend in an Freak Accident. Being tormented by the Pictures of his best Friend dying infront of him and the thought that he could've saved him, he quickly became depressed and spent the next 2 Years dealing with suicidal thoughts almost every Day. After picking himself up, he left Europe and his old Life behind to start anew in Los Santos.</div>
+                    </div>
+                    <div class="buttons">
+                        <div class="button play" onclick="selectCharacter();"><div class="verticalAlign">Select Character</div></div>
+                        <div class="button del" onclick="showDeleteCharacter(1);"><div class="verticalAlign">Delete Character</div></div>
+                    </div>
+                </div>
+                <div id="slot3" class="slot">
+                    <div class="title">Empty Slot</div>
+                    <div id="cdata" class="scroll"> 
+                    </div>
+                    <div class="buttons">
+                        <div class="button" onclick="showCreateCharacter();"><div class="verticalAlign">New Character</div></div>
+                    </div>
+                </div>
+                <div id="slot4" class="slot">
+                    <div class="title">Empty Slot</div>
+                    <div id="cdata" class="scroll"> 
+                    </div>
+                    <div class="buttons">
+                        <div class="button" onclick="showCreateCharacter();"><div class="verticalAlign">New Character</div></div>
+                    </div>
+                </div>
+                <div id="slot5" class="slot">
+                    <div class="title">Empty Slot</div>
+                    <div id="cdata" class="scroll"> 
+                    </div>
+                    <div class="buttons">
+                        <div class="button" onclick="showCreateCharacter();"><div class="verticalAlign">New Character</div></div>
+                    </div>
+                </div>
+                <div id="slot6" class="slot">
+                    <div class="title">Empty Slot</div>
+                    <div id="cdata" class="scroll"> 
+                    </div>
+                    <div class="buttons">
+                        <div class="button" onclick="showCreateCharacter();"><div class="verticalAlign">New Character</div></div>
+                    </div>
+                </div>
+                <div id="slot7" class="slot">
+                    <div class="title">Empty Slot</div>
+                    <div id="cdata" class="scroll"> 
+                    </div>
+                    <div class="buttons">
+                        <div class="button" onclick="showCreateCharacter();"><div class="verticalAlign">New Character</div></div>
+                    </div>
+                </div>
+                <div id="slot8" class="slot">
+                    <div class="title">Empty Slot</div>
+                    <div id="cdata" class="scroll"> 
+                    </div>
+                    <div class="buttons">
+                        <div class="button" onclick="showCreateCharacter();"><div class="verticalAlign">New Character</div></div>
+                    </div>
+                </div>
+            </div>
+            <div id="changelog" class="window">
+                <div class="title">UUENDUSED JA TEATED</div>
+                <div class="log scroll">
+
+                    <div class="date" style="color: rgb(255, 255, 255)">02-02-2024</div>
+                    <div class="changes">
+                        <ul>
+                            <li>Tere tulemast WSRP V1.0</li>
+                            <li>Kindlasti loege reeglid läbi mis asuvad https://wsrpucp.optikl.ink/ !</li>
+                            <li>Kõik vigadega seaotud asjad palun edastage meeskonnale</li>
+                            <li>Soovime teile head rollimängimist. Suurearmastusega meeskond.</li>
+                        </ul>
+                    </div>
+
+
+
+                    <div class="date" style="color: rgb(255, 255, 255)">02-02-2024</div>
+                    <div class="changes">
+                        <ul>
+                            <li>Hetkel on serveri ümber toimumas ucp loomine mis võtab aega.</li>
+                            
+                        </ul>
+                    </div>
+                </div>
+
+                    
+            </div>
+            <div class="blackbar bottom"> </div>
+        </div>
+    </body>
+</html>

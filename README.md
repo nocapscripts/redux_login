@@ -1,4 +1,4 @@
-QBCore old nopixel multicharacter under development that works but need some patches.
+QBCore old nopixel multicharacter under development that works but needs some fixes.
 
 ## Depedencies
 

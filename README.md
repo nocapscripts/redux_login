@@ -390,33 +390,3 @@ QBCore old nopixel multicharacter under development that works but needs some fi
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-API Generated

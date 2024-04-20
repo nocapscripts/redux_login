@@ -3,6 +3,8 @@ QBCore old nopixel 2.0 multicharacter under development that works but needs som
 ## Depedencies
 
 * ox_lib
+* ps-housing
+
 
 
 

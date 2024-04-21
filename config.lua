@@ -1,5 +1,7 @@
 Config = Config or {}
 
+Config.Debug = false
+
 
 Config.Framework = 'rs_base' -- Framework name
 

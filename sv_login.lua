@@ -1,4 +1,4 @@
-local Core = exports['rs_base']:GetCoreObject()
+local Core = exports[Config.Framework]:GetCoreObject()
 local hasDonePreloading = {}
 
 

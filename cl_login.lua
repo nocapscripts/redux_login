@@ -1,4 +1,4 @@
-local NPX = exports['rs_base']:GetCoreObject()
+local Core = exports[Config.Framework]:GetCoreObject()
 local menuOpen = false
 local setDate = 0
 local spawnAlreadyInit = false
@@ -81,7 +81,7 @@ local function closeMenu(bool)
 end
 
 RegisterNetEvent('CloseNui', function()
-    closeMenu()
+    closeMenu(false) -- default no bool
 
 end)
 
@@ -91,22 +91,17 @@ end
 
 local function nuiCallBack(data)
     Citizen.Wait(60)
-    --local events = exports["np-base"]:getModule("Events")
+    
 
     if data.close then openMenu(false) end
     if data.disconnect then disconnect() end
-    --if data.showcursor or data.showcursor == false then SetNuiFocus(true, data.showcursor) end
+    
     if data.setcursorloc then SetCursorLocation(data.setcursorloc.x, data.setcursorloc.y) end
     
     if data.fetchdata then
         local userchars = {}
         userchars = lib.callback.await('qb-multicharacter:server:GetUserCharacters', false)
-        /*lib.callback('qb-multicharacter:server:GetUserCharacters', false, function(result)
-            -- Update the cache with new alerts
-            userchars = result
-            print(json.encode(userchars))
-
-        end)*/
+        
         sendMessage({playerdata = userchars})
         
         
@@ -115,7 +110,7 @@ local function nuiCallBack(data)
 
     if data.newchar then
         print(json.encode(data))
-        --if not data.chardata then return end
+       
 
         local chardata = { 
             firstname = data.firstname,
@@ -135,7 +130,7 @@ local function nuiCallBack(data)
         end
         TriggerServerEvent('qb-multicharacter:server:createCharacter', chardata)
         Wait(500)
-        --cb("ok")
+       
         sendMessage({createCharacter = data})
         closeMenu()
 
@@ -146,13 +141,7 @@ local function nuiCallBack(data)
         local fetch = {}
         fetch = lib.callback.await('qb-multicharacter:server:setupCharacters', false)
         sendMessage({playercharacters = fetch})
-        /*lib.callback('qb-multicharacter:server:setupCharacters', false, function(result)
-            
-            --table.insert(fetch, result)
-            print("Fetch Chars: "..json.encode(result))
-            sendMessage({playercharacters = result})
-            
-        end)*/
+        
         
         
         
@@ -163,7 +152,7 @@ local function nuiCallBack(data)
         TriggerServerEvent('qb-multicharacter:server:deleteCharacter', data)
         TriggerEvent('np-base:spawnInitialized')
         sendMessage({reload = true})
-        --cb("ok")
+       
       
     end
 
@@ -172,7 +161,7 @@ local function nuiCallBack(data)
         closeMenu(false)
         TriggerServerEvent('qb-multicharacter:server:loadUserData', data)
        
-        --cb("ok")
+       
         
     end
 end
@@ -214,20 +203,7 @@ AddEventHandler("np-base:spawnInitialized", function()
     openMenu(true)
 end)
 
---[[
-RegisterCommand("kapat", function()
-    local LocalPlayer = exports["np-base"]:getModule("LocalPlayer")
-    local cid = LocalPlayer:getCurrentCharacter().id
-    TriggerEvent('updatecid', cid)
-    -- TriggerEvent("hotel:createroom")
-    -- TriggerEvent("raid_clothes:defaultReset")
-    -- DoScreenFadeIn(500)
-end)
 
-RegisterCommand("hotel", function()
-    TriggerEvent("hotel:createroom")
-end)
---]]
 RegisterNetEvent("updateTimeReturn")
 AddEventHandler("updateTimeReturn", function()
     setDate = "" .. 0 .. ""
@@ -235,24 +211,30 @@ AddEventHandler("updateTimeReturn", function()
 end)
 
   
+if Config.Debug then 
+    RegisterCommand("charopen", function()
+        openMenu(true)
+    end, false)
 
-/*RegisterCommand("charopen", function()
-    openMenu(true)
-end, false)
-
-RegisterCommand("charclose", function()
-    closeMenu(true)
-end, false)*/
+    RegisterCommand("charclose", function()
+        closeMenu(true)
+    end, false)
+end
 
 
-AddEventHandler('NPX:Client:OnPlayerLoaded', function()
-    local src = source
-    local user = NPX.Functions.GetPlayerData()
-    local steam = user.license 
-    local cid = user.cid
 
-    TriggerServerEvent('InsertUserData', src, cid, steam)
+-- It is related to my custom library script unfortunately i cannot share this :(
 
-end)
+if Config.InsertUserData then
+    AddEventHandler(Config.OnPlayerLoaded, function()
+        local src = source
+        local user = Core.Functions.GetPlayerData()
+        local steam = user.license 
+        local cid = user.cid
+
+        TriggerServerEvent('InsertUserData', src, cid, steam)
+
+    end)
+end
 
 

@@ -1,10 +1,10 @@
-local NPX = exports['rs_base']:GetCoreObject()
+local Core = exports['rs_base']:GetCoreObject()
 local hasDonePreloading = {}
 
 
 local function GiveStarterItems(source)
     local src = source
-    local Player = NPX.Functions.GetPlayer(src)
+    local Player = Core.Functions.GetPlayer(src)
     
     
    
@@ -15,12 +15,12 @@ local function GiveStarterItems(source)
 end
 
 
-AddEventHandler('NPX:Server:PlayerLoaded', function(Player)
+AddEventHandler(Config.OnPlayerLoaded, function(Player)
     Wait(1000) -- 1 second should be enough to do the preloading in other resources
     hasDonePreloading[Player.PlayerData.source] = true
 end)
 
-AddEventHandler('NPX:Server:OnPlayerUnload', function(src)
+AddEventHandler(Config.OnPlayerUnload, function(src)
     hasDonePreloading[src] = false
 end)
 
@@ -31,12 +31,12 @@ end)
 
 RegisterNetEvent('qb-multicharacter:server:loadUserData', function(cData)
     local src = source
-    if NPX.Player.Login(src, cData) then
+    if Core.Player.Login(src, cData) then
         repeat
             Wait(10)
         until hasDonePreloading[src]
         print('^2[qb-core]^7 '..GetPlayerName(src)..' (Citizen ID: '..cData..') has succesfully loaded!')
-        NPX.Commands.Refresh(src)
+        Core.Commands.Refresh(src)
         --TriggerClientEvent("CloseNui", src)
         TriggerClientEvent('ps-housing:client:setupSpawnUI', src, cData)
     end
@@ -49,15 +49,15 @@ RegisterNetEvent('qb-multicharacter:server:createCharacter', function(data)
     print(json.encode(data))
     newData.cid = math.random(1, 600)
     newData.charinfo = data
-    if NPX.Player.Login(src, false, newData) then
+    if Core.Player.Login(src, false, newData) then
         repeat
             Wait(10)
         until hasDonePreloading[src]
         print('^2[qb-core]^7 '..GetPlayerName(src)..' has succesfully loaded!')
-        NPX.Commands.Refresh(src)
+        Core.Commands.Refresh(src)
         GiveStarterItems(src)
         TriggerClientEvent("CloseNui", src)
-        newData.citizenid = NPX.Functions.GetPlayer(src).PlayerData.citizenid
+        newData.citizenid = Core.Functions.GetPlayer(src).PlayerData.citizenid
         TriggerClientEvent('ps-housing:client:setupSpawnUI', src, newData)
         
     end
@@ -66,14 +66,14 @@ end)
 
 RegisterNetEvent('qb-multicharacter:server:deleteCharacter', function(citizenid)
     local src = source
-    NPX.Player.DeleteCharacter(src, citizenid)
-    TriggerClientEvent('NPX:Notify', src, Lang:t("notifications.char_deleted") , "success")
+    Core.Player.DeleteCharacter(src, citizenid)
+    TriggerClientEvent(Config.Notify, src, Lang:t("notifications.char_deleted") , "success")
 end)
 
 
 lib.callback.register('qb-multicharacter:server:GetUserCharacters', function(data)
     local src = source
-    local steam = NPX.Functions.GetIdentifier(src, 'steam')
+    local steam = Core.Functions.GetIdentifier(src, 'steam')
     local data = {}
     local result = MySQL.query.await('SELECT * FROM players WHERE license = ?', {steam})
     
@@ -86,7 +86,7 @@ end)
 
 
 lib.callback.register('qb-multicharacter:server:setupCharacters', function(source)
-    local steam = NPX.Functions.GetIdentifier(source, 'steam')
+    local steam = Core.Functions.GetIdentifier(source, 'steam')
     local plyChars = {}
     local result = MySQL.query.await('SELECT * FROM players WHERE license = ?', {steam})
 
@@ -105,7 +105,7 @@ end)
 
 lib.callback.register('qb-multicharacter:server:GetNumberOfCharacters', function(data)
     local src = source
-    local license = NPX.Functions.GetIdentifier(src, 'steam')
+    local license = Core.Functions.GetIdentifier(src, 'steam')
     local numOfChars = 0
 
     if next(Config.PlayersNumberOfCharacters) then
@@ -143,9 +143,9 @@ end)
 
 
 
-NPX.Commands.Add("logout", "[Charmenu] logi välja", {}, false, function(source)
+Core.Commands.Add("logout", "[Charmenu] logs you off", {}, false, function(source)
     local src = source
-    NPX.Player.Logout(src)
+    Core.Player.Logout(src)
     TriggerClientEvent('np-base:spawnInitialized', src)
 end, "admin")
 

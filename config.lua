@@ -1,4 +1,15 @@
-Config = {}
+Config = Config or {}
+
+
+Config.Framework = 'rs_base' -- Framework name
+
+Config.InsertUserData = true -- Default: false This option is related to my custom library script which unfortunately i cannot share or make it public :(
+
+Config.OnPlayerLoaded = 'NPX:Client:OnPlayerLoaded' -- Player loaded event name
+
+Config.OnPlayerUnload = 'NPX:Client:OnPlayerUnload' -- Player unloaded event name
+
+Config.Notify = 'NPX:Notify' -- Notify event name
 
 Config.starterpack = { 
     ['phone'] = { count = 1, item = 'phone' },

@@ -1,11 +1,13 @@
 Config = Config or {}
 
-Config.Debug = false
+Config.Debug = true
 
 
 Config.Framework = 'rs_base' -- Framework name
 
-Config.InsertUserData = true -- Default: false This option is related to my custom library script which unfortunately i cannot share or make it public :(
+Config.HiddenCoords = vector4(-812.23, 182.54, 76.74, 156.5)
+
+Config.InsertUserData = false -- Default: false This option is related to my custom library script which unfortunately i cannot share or make it public :(
 
 Config.OnPlayerLoaded = 'NPX:Client:OnPlayerLoaded' -- Player loaded event name
 
@@ -24,7 +26,7 @@ Config.starterpack = {
 
 }
 
-Config.SkipSelection = false -- Skip the spawn selection and spawns the player at the last location
+Config.SkipSelection = true -- Skip the spawn selection and spawns the player at the last location
 Config.DefaultNumberOfCharacters = 5 -- Define maximum amount of default characters (maximum 5 characters defined by default)
 Config.PlayersNumberOfCharacters = { -- Define maximum amount of player characters by rockstar license (you can find this license in your server's database in the player table)
     { license = "license:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", numberOfChars = 2 },

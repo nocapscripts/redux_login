@@ -215,7 +215,7 @@ function buildCharacterSlots(characters){
         charId = JSON.stringify(char.citizenid)
         cid = JSON.stringify(char.cid)
         date = birth;
-        console.log(JSON.stringify(date))
+        //console.log(JSON.stringify(date))
         curLuaTime = parseInt(curLuaTime);
 
 
@@ -256,11 +256,11 @@ function selectCharacter(id){
     closeMenu();
     console.log(id)
     
-    //sendNuiMessage({selectCharacter: id});
+    sendNuiMessage({selectCharacter: id});
     $.post("https://rs_login/selectchar", JSON.stringify(id));
 
 
-    $.post('https://rs_login/exit', JSON.stringify({}));
+   // $.post('https://rs_login/exit', JSON.stringify({}));
     
 
 }

@@ -1,9 +1,8 @@
-local Core = exports[Config.Framework]:GetCoreObject()
 local menuOpen = false
 local setDate = 0
 local spawnAlreadyInit = false
 local cam = nil
-
+local chardata
 
 local function skyCam(bool)
     TriggerEvent('qb-weathersync:client:DisableSync')
@@ -27,27 +26,26 @@ local function skyCam(bool)
     end
 end
 
-RegisterNUICallback("exit", function(data)
-    openMenu(false)
-end)
+
 
 local function sendMessage(data)
     SendNUIMessage(data)
 end
+
+
 CreateThread(function()
 	while true do
 		Wait(0)
 		if NetworkIsSessionStarted() then
-            openMenu(true)
+            TriggerEvent('qb-multicharacter:client:chooseChar')
+            Wait(10)
 			return
         
         end
 	end
 end)
 
-
-
-function openMenu(bool)
+local function openMenu(bool)
 
     if spawnAlreadyInit then
         return
@@ -68,6 +66,20 @@ function openMenu(bool)
 
 end
 
+RegisterNetEvent('qb-multicharacter:client:chooseChar', function()
+    SetNuiFocus(true, true)
+    DoScreenFadeOut(10)
+    Wait(1000)
+    FreezeEntityPosition(PlayerPedId(), true)
+    SetEntityCoords(PlayerPedId(), Config.HiddenCoords.x, Config.HiddenCoords.y, Config.HiddenCoords.z)
+    Wait(1500)
+    ShutdownLoadingScreen()
+    ShutdownLoadingScreenNui()
+    openMenu(true)
+end)
+
+
+
 
 
 local function closeMenu(bool)
@@ -81,7 +93,7 @@ local function closeMenu(bool)
 end
 
 RegisterNetEvent('CloseNui', function()
-    closeMenu(false) -- default no bool
+    closeMenu() -- default no bool
 
 end)
 
@@ -89,38 +101,39 @@ local function disconnect()
     TriggerServerEvent("qb-multicharacter:server:disconnect")
 end
 
-local function nuiCallBack(data)
-    Citizen.Wait(60)
+local function datacallback(data)
+    Citizen.Wait(1000)
+    local src = source
     
+    print(json.encode(data))
 
     if data.close then openMenu(false) end
     if data.disconnect then disconnect() end
     
-    if data.setcursorloc then SetCursorLocation(data.setcursorloc.x, data.setcursorloc.y) end
+    --if data.setcursorloc then SetCursorLocation(data.setcursorloc.x, data.setcursorloc.y) end
     
     if data.fetchdata then
-        local userchars = {}
+        userchars = {}
         userchars = lib.callback.await('qb-multicharacter:server:GetUserCharacters', false)
         
         sendMessage({playerdata = userchars})
         
         
-        if data.showcursor or data.showcursor == false then SetNuiFocus(true, data.showcursor) end
+        --if data.showcursor or data.showcursor == false then SetNuiFocus(true, data.showcursor) end
     end
 
     if data.newchar then
         print(json.encode(data))
        
 
-        local chardata = { 
+        chardata = { 
             firstname = data.firstname,
             lastname = data.lastname,
-            birthdate = data.birthdate ,
+            birthdate = data.birthdate,
             gender = data.gender,
             background = data.background,
             story = data.story,
-            cid = 0,
-
+            cid = math.random(9999),
         }
        
         if data.gender == "Male" then
@@ -129,16 +142,16 @@ local function nuiCallBack(data)
             data.gender = 1
         end
         TriggerServerEvent('qb-multicharacter:server:createCharacter', chardata)
-        Wait(500)
+        Wait(50)
        
         sendMessage({createCharacter = data})
-        closeMenu()
+        closeMenu(false)
 
        
     end
 
     if data.fetchcharacters then
-        local fetch = {}
+        fetch = {}
         fetch = lib.callback.await('qb-multicharacter:server:setupCharacters', false)
         sendMessage({playercharacters = fetch})
         
@@ -150,7 +163,9 @@ local function nuiCallBack(data)
     if data.deletecharacter then
         if not data.deletecharacter then return end
         TriggerServerEvent('qb-multicharacter:server:deleteCharacter', data)
-        TriggerEvent('np-base:spawnInitialized')
+
+        TriggerEvent('qb-multicharacter:client:chooseChar')
+        openMenu(true)
         sendMessage({reload = true})
        
       
@@ -159,16 +174,18 @@ local function nuiCallBack(data)
     if data.selectcharacter then
         Wait(1000)
         closeMenu(false)
-        TriggerServerEvent('qb-multicharacter:server:loadUserData', data)
-       
+        print(json.encode("MEGA LAHE ON IKKA: " .. data.charId))
+        TriggerServerEvent('rs_login:loadUserData', data.charId)
+        print("Nehhhhhhhhhhhh")
        
         
     end
 end
 
-RegisterNUICallback("nuiMessage", nuiCallBack)
+RegisterNUICallback("nuiMessage", datacallback)
 
 RegisterNUICallback('createNewCharacter', function(data, cb)
+    local src = source
     local cData = data
     DoScreenFadeOut(150)
     if cData.gender == "Male" then
@@ -184,24 +201,23 @@ RegisterNUICallback('createNewCharacter', function(data, cb)
 end)
 
 RegisterNUICallback("deletechar", function(data)
-
+    local src = source
     TriggerServerEvent('qb-multicharacter:server:deleteCharacter', data)
 
 end)
 
-RegisterNUICallback("selectchar", function(data)
+RegisterNUICallback("selectchar", function(data, cb)
+    print("Selected character citizenid: ".. json.encode(data))
+    local cData = {
+        citizenid = data
+    }
+    DoScreenFadeOut(10)
     closeMenu(false)
-    SetNuiFocus(false, false)
-    print("This is selector")
-    TriggerServerEvent('qb-multicharacter:server:loadUserData', data)
-
+    cb("ok")
+    TriggerServerEvent('rs_login:loadUserData', cData)
 end)
 
-RegisterNetEvent("np-base:spawnInitialized")
-AddEventHandler("np-base:spawnInitialized", function()
-    -- Citizen.Wait(3000)
-    openMenu(true)
-end)
+
 
 
 RegisterNetEvent("updateTimeReturn")
@@ -213,11 +229,12 @@ end)
   
 if Config.Debug then 
     RegisterCommand("charopen", function()
+        --TriggerEvent('qb-multicharacter:client:chooseChar')
         openMenu(true)
     end, false)
 
     RegisterCommand("charclose", function()
-        closeMenu(true)
+        closeMenu(false)
     end, false)
 end
 
@@ -225,16 +242,35 @@ end
 
 -- It is related to my custom library script unfortunately i cannot share this :(
 
-if Config.InsertUserData then
+--if Config.InsertUserData then
     AddEventHandler(Config.OnPlayerLoaded, function()
         local src = source
-        local user = Core.Functions.GetPlayerData()
+        local user = NPX.Functions.GetPlayerData()
         local steam = user.license 
         local cid = user.cid
 
         TriggerServerEvent('InsertUserData', src, cid, steam)
 
     end)
-end
+--end
+
+AddEventHandler('onResourceStart', function()
+    TriggerServerEvent('Logout')
+    --openMenu(true)
+
+end)
 
 
+RegisterNUICallback("exit", function(data)
+    closeMenu(false)
+end)
+
+
+
+
+
+RegisterNetEvent("np-base:spawnInitialized")
+AddEventHandler("np-base:spawnInitialized", function()
+    -- Citizen.Wait(3000)
+    TriggerEvent('qb-multicharacter:client:chooseChar')
+end)
